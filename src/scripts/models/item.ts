@@ -3,7 +3,7 @@ import lf from "lovefield"
 import intl from "react-intl-universal"
 import { domParser, htmlDecode, ActionStatus, AppThunk, platformCtrl } from "../utils"
 import { RSSSource, updateSource, updateUnreadCounts } from "./source"
-import { FeedActionTypes, INIT_FEED, LOAD_MORE, FilterType, initFeeds } from "./feed"
+import { FeedActionTypes, INIT_FEED, LOAD_MORE, FilterType, initFeeds, dismissItems } from "./feed"
 import Parser from "@yang991178/rss-parser"
 import { pushNotification, setupAutoFetch, SettingsActionTypes, FREE_MEMORY } from "./app"
 import { getServiceHooks, syncWithService, ServiceActionTypes, SYNC_LOCAL_ITEMS } from "./service"
@@ -34,7 +34,7 @@ export class RSSItem {
         this.title = item.title || intl.get("article.untitled")
         this.link = item.link || ""
         this.fetchedDate = new Date()
-        this.date = item.isoDate ? new Date(item.isoDate) : this.fetchedDate
+        this.date = new Date(item.isoDate ?? item.pubDate ?? this.fetchedDate)
         this.creator = item.creator
         this.hasRead = false
         this.starred = false
@@ -213,6 +213,8 @@ export function fetchItems(background = false, sids: number[] = null): AppThunk<
                         if (inserted.length > 0) {
                             window.utils.requestAttention()
                         }
+                    } else {
+                        dispatch(dismissItems())
                     }
                     dispatch(setupAutoFetch())
                 })

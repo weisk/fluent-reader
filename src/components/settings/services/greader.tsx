@@ -1,15 +1,14 @@
 import * as React from "react"
 import intl from "react-intl-universal"
 import { ServiceConfigsTabProps } from "../service"
-import { FeedbinConfigs } from "../../../scripts/models/services/feedbin"
+import { GReaderConfigs } from "../../../scripts/models/services/greader"
 import { SyncService } from "../../../schema-types"
-import { Stack, Icon, Label, TextField, PrimaryButton, DefaultButton, Checkbox, 
-    MessageBar, MessageBarType, Dropdown, IDropdownOption } from "@fluentui/react"
+import { Stack, Icon, Label, TextField, PrimaryButton, DefaultButton, Checkbox, MessageBar, MessageBarType, Dropdown, IDropdownOption } from "@fluentui/react"
 import DangerButton from "../../utils/danger-button"
 import { urlTest } from "../../../scripts/utils"
 import LiteExporter from "./lite-exporter"
 
-type FeedbinConfigsTabState = {
+type GReaderConfigsTabState = {
     existing: boolean
     endpoint: string
     username: string
@@ -18,13 +17,13 @@ type FeedbinConfigsTabState = {
     importGroups: boolean
 }
 
-class FeedbinConfigsTab extends React.Component<ServiceConfigsTabProps, FeedbinConfigsTabState> {
+class GReaderConfigsTab extends React.Component<ServiceConfigsTabProps, GReaderConfigsTabState> {
     constructor(props: ServiceConfigsTabProps) {
         super(props)
-        const configs = props.configs as FeedbinConfigs
+        const configs = props.configs as GReaderConfigs
         this.state = {
-            existing: configs.type === SyncService.Feedbin,
-            endpoint: configs.endpoint || "https://api.feedbin.me/v2/",
+            existing: configs.type === SyncService.GReader,
+            endpoint: configs.endpoint || "",
             username: configs.username || "",
             password: "",
             fetchLimit: configs.fetchLimit || 250,
@@ -59,26 +58,27 @@ class FeedbinConfigsTab extends React.Component<ServiceConfigsTabProps, FeedbinC
     }
 
     save = async () => {
-        let configs: FeedbinConfigs
+        let configs: GReaderConfigs
         if (this.state.existing) {
             configs = {
                 ...this.props.configs,
                 endpoint: this.state.endpoint,
                 fetchLimit: this.state.fetchLimit
-            } as FeedbinConfigs
-            if (this.state.password) 
-                configs.password = this.state.password
+            } as GReaderConfigs
+            if (this.state.password) configs.password = this.state.password
         } else {
             configs = {
-                type: SyncService.Feedbin,
+                type: SyncService.GReader,
                 endpoint: this.state.endpoint,
                 username: this.state.username,
                 password: this.state.password,
                 fetchLimit: this.state.fetchLimit,
+                useInt64: !this.state.endpoint.endsWith("theoldreader.com")
             }
             if (this.state.importGroups) configs.importGroups = true
         }
         this.props.blockActions()
+        configs = await this.props.reauthenticate(configs) as GReaderConfigs
         const valid = await this.props.authenticate(configs)
         if (valid) {
             this.props.save(configs)
@@ -101,8 +101,8 @@ class FeedbinConfigsTab extends React.Component<ServiceConfigsTabProps, FeedbinC
                 <MessageBar messageBarType={MessageBarType.warning}>{intl.get("service.overwriteWarning")}</MessageBar>
             )}
             <Stack horizontalAlign="center" style={{marginTop: 48}}>
-                <svg style={{fill: "var(--black)", width: 32, userSelect: "none"}} viewBox="0 0 120 120"><path d="M116.4,87.2c-22.5-0.1-96.9-0.1-112.4,0c-4.9,0-4.8-22.5,0-23.3c15.6-2.5,60.3,0,60.3,0s16.1,16.3,20.8,16.3  c4.8,0,16.1-16.3,16.1-16.3s12.8-2.3,15.2,0C120.3,67.9,121.2,87.3,116.4,87.2z" /><path d="M110.9,108.8L110.9,108.8c-19.1,2.5-83.6,1.9-103,0c-4.3-0.4-1.5-13.6-1.5-13.6h108.1  C114.4,95.2,116.3,108.1,110.9,108.8z" /><path d="M58.1,9.9C30.6,6.2,7.9,29.1,7.9,51.3l102.6,1C110.6,30.2,85.4,13.6,58.1,9.9z" /></svg>
-                <Label style={{margin: "8px 0 36px"}}>Feedbin</Label>
+                <Icon iconName="Communications" style={{color: "var(--black)", transform: "rotate(220deg)", fontSize: 32, userSelect: "none"}} />
+                <Label style={{margin: "8px 0 36px"}}>Google Reader API</Label>
                 <Stack className="login-form" horizontal>
                     <Stack.Item>
                         <Label>{intl.get("service.endpoint")}</Label>
@@ -118,7 +118,7 @@ class FeedbinConfigsTab extends React.Component<ServiceConfigsTabProps, FeedbinC
                 </Stack>
                 <Stack className="login-form" horizontal>
                     <Stack.Item>
-                        <Label>Email</Label>
+                        <Label>{intl.get("service.username")}</Label>
                     </Stack.Item>
                     <Stack.Item grow>
                         <TextField
@@ -180,4 +180,4 @@ class FeedbinConfigsTab extends React.Component<ServiceConfigsTabProps, FeedbinC
     }
 }
 
-export default FeedbinConfigsTab
+export default GReaderConfigsTab
