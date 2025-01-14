@@ -19,7 +19,11 @@ export class SourceGroup {
 }
 
 export const enum ViewType {
-    Cards, List, Magazine, Compact, Customized
+    Cards,
+    List,
+    Magazine,
+    Compact,
+    Customized,
 }
 
 export const enum ViewConfigs {
@@ -29,21 +33,34 @@ export const enum ViewConfigs {
 }
 
 export const enum ThemeSettings {
-    Default = "system", 
-    Light = "light", 
-    Dark = "dark"
+    Default = "system",
+    Light = "light",
+    Dark = "dark",
 }
 
 export const enum SearchEngines {
-    Google, Bing, Baidu, DuckDuckGo
+    Google,
+    Bing,
+    Baidu,
+    DuckDuckGo,
 }
 
 export const enum ImageCallbackTypes {
-    OpenExternal, OpenExternalBg, SaveAs, Copy, CopyLink
+    OpenExternal,
+    OpenExternalBg,
+    SaveAs,
+    Copy,
+    CopyLink,
 }
 
 export const enum SyncService {
-    None, Fever, Feedbin, GReader, Inoreader
+    None,
+    Fever,
+    Feedbin,
+    GReader,
+    Inoreader,
+    Miniflux,
+    Nextcloud,
 }
 export interface ServiceConfigs {
     type: SyncService
@@ -51,7 +68,9 @@ export interface ServiceConfigs {
 }
 
 export const enum WindowStateListenerType {
-    Maximized, Focused
+    Maximized,
+    Focused,
+    Fullscreen,
 }
 
 export interface TouchBarTexts {
@@ -71,6 +90,7 @@ export type SchemaTypes = {
     locale: string
     sourceGroups: SourceGroup[]
     fontSize: number
+    fontFamily: string
     menuOn: boolean
     fetchInterval: number
     searchEngine: SearchEngines

@@ -18,6 +18,7 @@
     "confirmMarkAll": "确认将本页所有文章标为已读？",
     "confirm": "确认",
     "cancel": "取消",
+    "default": "默认",
     "time": {
         "now": "now",
         "m": "m",
@@ -66,7 +67,12 @@
         "loadWebpage": "加载网页",
         "loadFull": "抓取全文",
         "notify": "后台抓取时发送通知",
-        "dontNotify": "不发送通知"
+        "dontNotify": "不发送通知",
+        "textDir": "文本方向",
+        "LTR": "从左到右",
+        "RTL": "从右到左",
+        "Vertical": "纵书",
+        "font": "字体"
     },
     "context": {
         "share": "分享",
@@ -141,7 +147,8 @@
         "badUrl": "请正确输入URL",
         "deleteWarning": "这将移除订阅源与所有已保存的文章",
         "selected": "选中订阅源",
-        "selectedMulti": "选中多个订阅源"
+        "selectedMulti": "选中多个订阅源",
+        "hidden": "从“全部文章”中隐藏"
     },
     "groups": {
         "exist": "该分组已存在",
@@ -209,7 +216,7 @@
         "cacheSize": "已缓存{size}数据",
         "deleteChoices": "删除 … 天前的文章",
         "confirmDelete": "删除文章",
-        "daysAgo": "{days}天前",
+        "daysAgo": "{days} 天前",
         "deleteAll": "删除全部文章",
         "calculatingSize": "正在计算占用空间…",
         "itemSize": "本地文章约占用{size}空间",

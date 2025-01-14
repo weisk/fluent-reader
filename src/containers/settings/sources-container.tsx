@@ -3,14 +3,23 @@ import { connect } from "react-redux"
 import { createSelector } from "reselect"
 import { RootState } from "../../scripts/reducer"
 import SourcesTab from "../../components/settings/sources"
-import { addSource, RSSSource, updateSource, deleteSource, SourceOpenTarget, deleteSources } from "../../scripts/models/source"
+import {
+    addSource,
+    RSSSource,
+    updateSource,
+    deleteSource,
+    SourceOpenTarget,
+    deleteSources,
+    toggleSourceHidden,
+} from "../../scripts/models/source"
 import { importOPML, exportOPML } from "../../scripts/models/group"
 import { AppDispatch, validateFavicon } from "../../scripts/utils"
 import { saveSettings, toggleSettings } from "../../scripts/models/app"
 import { SyncService } from "../../schema-types"
 
 const getSources = (state: RootState) => state.sources
-const getServiceOn = (state: RootState) => state.service.type !== SyncService.None
+const getServiceOn = (state: RootState) =>
+    state.service.type !== SyncService.None
 const getSIDs = (state: RootState) => state.app.settings.sids
 
 const mapStateToProps = createSelector(
@@ -23,7 +32,7 @@ const mapStateToProps = createSelector(
 )
 
 const mapDispatchToProps = (dispatch: AppDispatch) => {
-    return { 
+    return {
         acknowledgeSIDs: () => dispatch(toggleSettings(true)),
         addSource: (url: string) => dispatch(addSource(url)),
         updateSourceName: (source: RSSSource, name: string) => {
@@ -38,18 +47,34 @@ const mapDispatchToProps = (dispatch: AppDispatch) => {
             }
             dispatch(saveSettings())
         },
-        updateSourceOpenTarget: (source: RSSSource, target: SourceOpenTarget) => {
-            dispatch(updateSource({ ...source, openTarget: target } as RSSSource))
+        updateSourceOpenTarget: (
+            source: RSSSource,
+            target: SourceOpenTarget
+        ) => {
+            dispatch(
+                updateSource({ ...source, openTarget: target } as RSSSource)
+            )
         },
         updateFetchFrequency: (source: RSSSource, frequency: number) => {
-            dispatch(updateSource({ ...source, fetchFrequency: frequency } as RSSSource))
+            dispatch(
+                updateSource({
+                    ...source,
+                    fetchFrequency: frequency,
+                } as RSSSource)
+            )
         },
         deleteSource: (source: RSSSource) => dispatch(deleteSource(source)),
-        deleteSources: (sources: RSSSource[]) => dispatch(deleteSources(sources)),
+        deleteSources: (sources: RSSSource[]) =>
+            dispatch(deleteSources(sources)),
         importOPML: () => dispatch(importOPML()),
-        exportOPML: () => dispatch(exportOPML())
+        exportOPML: () => dispatch(exportOPML()),
+        toggleSourceHidden: (source: RSSSource) =>
+            dispatch(toggleSourceHidden(source)),
     }
 }
 
- const SourcesTabContainer = connect(mapStateToProps, mapDispatchToProps)(SourcesTab)
- export default SourcesTabContainer
+const SourcesTabContainer = connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(SourcesTab)
+export default SourcesTabContainer

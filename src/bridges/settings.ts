@@ -1,4 +1,11 @@
-import { SourceGroup, ViewType, ThemeSettings, SearchEngines, ServiceConfigs, ViewConfigs } from "../schema-types"
+import {
+    SourceGroup,
+    ViewType,
+    ThemeSettings,
+    SearchEngines,
+    ServiceConfigs,
+    ViewConfigs,
+} from "../schema-types"
 import { ipcRenderer } from "electron"
 
 const settingsBridge = {
@@ -68,6 +75,13 @@ const settingsBridge = {
         ipcRenderer.invoke("set-font-size", size)
     },
 
+    getFont: (): string => {
+        return ipcRenderer.sendSync("get-font")
+    },
+    setFont: (font: string) => {
+        ipcRenderer.invoke("set-font", font)
+    },
+
     getFetchInterval: (): number => {
         return ipcRenderer.sendSync("get-fetch-interval")
     },
@@ -114,12 +128,12 @@ const settingsBridge = {
         return ipcRenderer.sendSync("get-all-settings") as Object
     },
 
-    setAll: (configs) => {
+    setAll: configs => {
         ipcRenderer.invoke("import-all-settings", configs)
     },
 }
 
-declare global { 
+declare global {
     interface Window {
         settings: typeof settingsBridge
     }

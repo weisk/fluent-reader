@@ -3,11 +3,14 @@ import { IPartialTheme, loadTheme } from "@fluentui/react"
 import locales from "./i18n/_locales"
 import { ThemeSettings } from "../schema-types"
 import intl from "react-intl-universal"
+import { SourceTextDirection } from "./models/source"
 
-const lightTheme: IPartialTheme = {
-    defaultFontStyle: { fontFamily: '"Segoe UI", "Source Han Sans SC Regular", "Microsoft YaHei", sans-serif' }
+let lightTheme: IPartialTheme = {
+    defaultFontStyle: {
+        fontFamily: '"Segoe UI", "Source Han Sans Regular", sans-serif',
+    },
 }
-const darkTheme: IPartialTheme = {
+let darkTheme: IPartialTheme = {
     ...lightTheme,
     palette: {
         neutralLighterAlt: "#282828",
@@ -33,10 +36,36 @@ const darkTheme: IPartialTheme = {
         themeDarkAlt: "#4ba0e1",
         themeDark: "#65aee6",
         themeDarker: "#8ac2ec",
-        accent: "#3a96dd"
-    }
+        accent: "#3a96dd",
+    },
 }
 
+export function setThemeDefaultFont(locale: string) {
+    switch (locale) {
+        case "zh-CN":
+            lightTheme.defaultFontStyle.fontFamily =
+                '"Segoe UI", "Source Han Sans SC Regular", "Microsoft YaHei", sans-serif'
+            break
+        case "zh-TW":
+            lightTheme.defaultFontStyle.fontFamily =
+                '"Segoe UI", "Source Han Sans TC Regular", "Microsoft JhengHei", sans-serif'
+            break
+        case "ja":
+            lightTheme.defaultFontStyle.fontFamily =
+                '"Segoe UI", "Source Han Sans JP Regular", "Yu Gothic UI", sans-serif'
+            break
+        case "ko":
+            lightTheme.defaultFontStyle.fontFamily =
+                '"Segoe UI", "Source Han Sans KR Regular", "Malgun Gothic", sans-serif'
+            break
+        default:
+            lightTheme.defaultFontStyle.fontFamily =
+                '"Segoe UI", "Source Han Sans Regular", sans-serif'
+    }
+    darkTheme.defaultFontStyle.fontFamily =
+        lightTheme.defaultFontStyle.fontFamily
+    applyThemeSettings()
+}
 export function setThemeSettings(theme: ThemeSettings) {
     window.settings.setThemeSettings(theme)
     applyThemeSettings()
@@ -47,7 +76,7 @@ export function getThemeSettings(): ThemeSettings {
 export function applyThemeSettings() {
     loadTheme(window.settings.shouldUseDarkColors() ? darkTheme : lightTheme)
 }
-window.settings.addThemeUpdateListener((shouldDark) => {
+window.settings.addThemeUpdateListener(shouldDark => {
     loadTheme(shouldDark ? darkTheme : lightTheme)
 })
 
@@ -55,12 +84,15 @@ export function getCurrentLocale() {
     let locale = window.settings.getCurrentLocale()
     if (locale in locales) return locale
     locale = locale.split("-")[0]
-    return (locale in locales) ? locale : "en-US"
+    return locale in locales ? locale : "en-US"
 }
 
 export async function exportAll() {
     const filters = [{ name: intl.get("app.frData"), extensions: ["frdata"] }]
-    const write = await window.utils.showSaveDialog(filters, "*/Fluent_Reader_Backup.frdata")
+    const write = await window.utils.showSaveDialog(
+        filters,
+        "*/Fluent_Reader_Backup.frdata"
+    )
     if (write) {
         let output = window.settings.getAll()
         output["lovefield"] = {
@@ -78,8 +110,10 @@ export async function importAll() {
     let confirmed = await window.utils.showMessageBox(
         intl.get("app.restore"),
         intl.get("app.confirmImport"),
-        intl.get("confirm"), intl.get("cancel"),
-        true, "warning"
+        intl.get("confirm"),
+        intl.get("cancel"),
+        true,
+        "warning"
     )
     if (!confirmed) return true
     let configs = JSON.parse(data)
@@ -90,14 +124,19 @@ export async function importAll() {
         configs.useNeDB = true
         openRequest.onsuccess = () => {
             let db = openRequest.result
-            let objectStore = db.transaction("nedbdata", "readwrite").objectStore("nedbdata")
+            let objectStore = db
+                .transaction("nedbdata", "readwrite")
+                .objectStore("nedbdata")
             let requests = Object.entries(configs.nedb).map(([key, value]) => {
                 return objectStore.put(value, key)
             })
-            let promises = requests.map(req => new Promise<void>((resolve, reject) => {
-                req.onsuccess = () => resolve()
-                req.onerror = () => reject()
-            }))
+            let promises = requests.map(
+                req =>
+                    new Promise<void>((resolve, reject) => {
+                        req.onsuccess = () => resolve()
+                        req.onerror = () => reject()
+                    })
+            )
             Promise.all(promises).then(() => {
                 delete configs.nedb
                 window.settings.setAll(configs)
@@ -106,6 +145,8 @@ export async function importAll() {
     } else {
         const sRows = configs.lovefield.sources.map(s => {
             s.lastFetched = new Date(s.lastFetched)
+            if (!s.textDir) s.textDir = SourceTextDirection.LTR
+            if (!s.hidden) s.hidden = false
             return db.sources.createRow(s)
         })
         const iRows = configs.lovefield.items.map(i => {
@@ -117,6 +158,6 @@ export async function importAll() {
         await db.itemsDB.insert().into(db.items).values(iRows).exec()
         delete configs.lovefield
         window.settings.setAll(configs)
-    }  
+    }
     return false
 }

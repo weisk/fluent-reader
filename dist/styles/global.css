@@ -46,14 +46,32 @@ body.darwin {
     --navHeight: 38px;
 }
 
-html, body {
+html,
+body {
     background-color: transparent;
-    font-family: "Segoe UI", "Source Han Sans SC Regular", "Microsoft YaHei", sans-serif;
+    font-family: "Segoe UI", "Source Han Sans Regular", sans-serif;
     height: 100%;
     overflow: hidden;
     margin: 0;
 }
-body.win32, body.linux {
+body:lang(zh-CN) {
+    font-family: "Segoe UI", "Source Han Sans SC Regular", "Microsoft YaHei",
+        sans-serif;
+}
+body:lang(zh-TW) {
+    font-family: "Segoe UI", "Source Han Sans TC Regular", "Microsoft JhengHei",
+        sans-serif;
+}
+body:lang(ja) {
+    font-family: "Segoe UI", "Source Han Sans JP Regular", "Yu Gothic UI",
+        sans-serif;
+}
+body:lang(ko) {
+    font-family: "Segoe UI", "Source Han Sans KR Regular", "Malgun Gothic",
+        sans-serif;
+}
+body.win32,
+body.linux {
     background-color: var(--neutralLighterAlt);
 }
 #root {
@@ -63,12 +81,15 @@ body.win32, body.linux {
 .ms-Link {
     user-select: none;
 }
-.ms-ContextualMenu-link, .ms-Button, .ms-ContextualMenu-item button {
+.ms-ContextualMenu-link,
+.ms-Button,
+.ms-ContextualMenu-item button {
     cursor: default;
     font-size: 13px;
     user-select: none;
 }
-.ms-Nav-link, .ms-Nav-chevronButton {
+.ms-Nav-link,
+.ms-Nav-chevronButton {
     font-size: 12px;
     line-height: 32px;
     height: 32px;
@@ -105,13 +126,16 @@ i.ms-Nav-chevron {
 .ms-Nav-groupContent {
     margin-bottom: 24px;
 }
-.ms-ActivityItem-activityTypeIcon, .ms-ActivityItem-timeStamp {
+.ms-ActivityItem-activityTypeIcon,
+.ms-ActivityItem-timeStamp {
     user-select: none;
 }
-.ms-Label, .ms-Spinner-label {
+.ms-Label,
+.ms-Spinner-label {
     user-select: none;
 }
-.ms-ActivityItem, .ms-ActivityItem-commentText {
+.ms-ActivityItem,
+.ms-ActivityItem-commentText {
     color: var(--neutralSecondary);
 }
 .ms-ActivityItem-timeStamp {
@@ -129,13 +153,18 @@ i.ms-Nav-chevron {
     color: var(--neutralPrimary);
 }
 
+.ms-Callout-main {
+    border-radius: 5px;
+}
+
 #root > nav {
     height: var(--navHeight);
     -webkit-app-region: drag;
     user-select: none;
     overflow: hidden;
 }
-#root > nav .btn, #root > nav span {
+#root > nav .btn,
+#root > nav span {
     z-index: 1;
     position: relative;
 }
@@ -203,11 +232,12 @@ body.darwin .btn-group .seperator {
     font-size: 14px;
     vertical-align: top;
 }
-#root > nav .btn-group .btn, .menu .btn-group .btn {
+#root > nav .btn-group .btn,
+.menu .btn-group .btn {
     height: var(--navHeight);
     line-height: var(--navHeight);
 }
-body.darwin #root > nav .btn-group .btn:first-of-type {
+body.darwin.not-fullscreen #root > nav .btn-group:first-of-type {
     margin-left: 72px;
 }
 #root > nav .btn-group .btn.system {
@@ -223,16 +253,19 @@ nav.hide-btns .btn-group .btn.system {
 nav.item-on .btn-group .btn.system {
     color: var(--whiteConstant);
 }
-.btn-group .btn:hover, .ms-Nav-compositeLink:hover {
+.btn-group .btn:hover,
+.ms-Nav-compositeLink:hover {
     background-color: #0001;
 }
-.btn-group .btn:active, .ms-Nav-compositeLink:active {
+.btn-group .btn:active,
+.ms-Nav-compositeLink:active {
     background-color: #0002;
 }
 .ms-Nav-compositeLink:hover .ms-Nav-link {
     background: none;
 }
-.btn-group .btn.disabled, .btn-group .btn.fetching {
+.btn-group .btn.disabled,
+.btn-group .btn.fetching {
     background-color: unset !important;
     color: var(--neutralSecondaryAlt);
 }
@@ -240,8 +273,12 @@ nav.item-on .btn-group .btn.system {
     animation: rotating linear 1.5s infinite;
 }
 @keyframes rotating {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
 }
 .btn-group .btn.close:hover {
     background-color: #e81123;
@@ -251,7 +288,7 @@ nav.item-on .btn-group .btn.system {
     background-color: #f1707a;
     color: var(--whiteConstant) !important;
 }
-.btn-group .btn.inline-block-wide { 
+.btn-group .btn.inline-block-wide {
     display: none;
 }
 body.darwin .btn-group .btn.system {

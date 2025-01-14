@@ -18,6 +18,7 @@
     "confirmMarkAll": "Do you really want to mark all articles on this page as read?",
     "confirm": "Confirm",
     "cancel": "Cancel",
+    "default": "Default",
     "time": {
         "now": "now",
         "m": "m",
@@ -66,7 +67,12 @@
         "loadWebpage": "Load webpage",
         "loadFull": "Load full content",
         "notify": "Notify if fetched in background",
-        "dontNotify": "Don't notify"
+        "dontNotify": "Don't notify",
+        "textDir": "Text direction",
+        "LTR": "Left-to-right",
+        "RTL": "Right-to-left",
+        "Vertical": "Vertical",
+        "font": "Font"
     },
     "context": {
         "share": "Share",
@@ -143,7 +149,8 @@
         "badUrl": "Invalid URL",
         "deleteWarning": "The source and all saved articles will be removed.",
         "selected": "Selected source",
-        "selectedMulti": "Selected multiple sources"
+        "selectedMulti": "Selected multiple sources",
+        "hidden": "Hide in \"all articles\""
     },
     "groups": {
         "exist": "This group already exists.",
@@ -211,7 +218,7 @@
         "cacheSize": "Cached {size} of data",
         "deleteChoices": "Delete articles from ... days ago",
         "confirmDelete": "Delete",
-        "daysAgo": "{days} days ago",
+        "daysAgo": "{days, plural, =1 {# day} other {# days}} ago",
         "deleteAll": "Delete all articles",
         "calculatingSize": "Calculating size...",
         "itemSize": "Around {size} of local storage is occupied by articles",

@@ -1,5 +1,9 @@
 import { ipcRenderer } from "electron"
-import { ImageCallbackTypes, TouchBarTexts, WindowStateListenerType } from "../schema-types"
+import {
+    ImageCallbackTypes,
+    TouchBarTexts,
+    WindowStateListenerType,
+} from "../schema-types"
 import { IObjectWithKey } from "@fluentui/react"
 
 const utilsBridge = {
@@ -9,20 +13,39 @@ const utilsBridge = {
         return ipcRenderer.sendSync("get-version")
     },
 
-    openExternal: (url: string, background=false) => {
+    openExternal: (url: string, background = false) => {
         ipcRenderer.invoke("open-external", url, background)
     },
 
-    showErrorBox: (title: string, content: string) => {
-        ipcRenderer.invoke("show-error-box", title, content)
+    showErrorBox: (title: string, content: string, copy?: string) => {
+        ipcRenderer.invoke("show-error-box", title, content, copy)
     },
 
-    showMessageBox: async (title: string, message: string, confirm: string, cancel: string, defaultCancel=false, type="none") => {
-        return await ipcRenderer.invoke("show-message-box", title, message, confirm, cancel, defaultCancel, type) as boolean
+    showMessageBox: async (
+        title: string,
+        message: string,
+        confirm: string,
+        cancel: string,
+        defaultCancel = false,
+        type = "none"
+    ) => {
+        return (await ipcRenderer.invoke(
+            "show-message-box",
+            title,
+            message,
+            confirm,
+            cancel,
+            defaultCancel,
+            type
+        )) as boolean
     },
 
     showSaveDialog: async (filters: Electron.FileFilter[], path: string) => {
-        let result = await ipcRenderer.invoke("show-save-dialog", filters, path) as boolean
+        let result = (await ipcRenderer.invoke(
+            "show-save-dialog",
+            filters,
+            path
+        )) as boolean
         if (result) {
             return (result: string, errmsg: string) => {
                 ipcRenderer.invoke("write-save-result", result, errmsg)
@@ -33,7 +56,7 @@ const utilsBridge = {
     },
 
     showOpenDialog: async (filters: Electron.FileFilter[]) => {
-        return await ipcRenderer.invoke("show-open-dialog", filters) as string
+        return (await ipcRenderer.invoke("show-open-dialog", filters)) as string
     },
 
     getCacheSize: async (): Promise<number> => {
@@ -44,13 +67,17 @@ const utilsBridge = {
         await ipcRenderer.invoke("clear-cache")
     },
 
-    addMainContextListener: (callback: (pos: [number, number], text: string) => any) => {
+    addMainContextListener: (
+        callback: (pos: [number, number], text: string) => any
+    ) => {
         ipcRenderer.removeAllListeners("window-context-menu")
         ipcRenderer.on("window-context-menu", (_, pos, text) => {
             callback(pos, text)
         })
     },
-    addWebviewContextListener: (callback: (pos: [number, number], text: string, url: string) => any) => {
+    addWebviewContextListener: (
+        callback: (pos: [number, number], text: string, url: string) => any
+    ) => {
         ipcRenderer.removeAllListeners("webview-context-menu")
         ipcRenderer.on("webview-context-menu", (_, pos, text, url) => {
             callback(pos, text, url)
@@ -90,6 +117,9 @@ const utilsBridge = {
     isMaximized: () => {
         return ipcRenderer.sendSync("is-maximized") as boolean
     },
+    isFullscreen: () => {
+        return ipcRenderer.sendSync("is-fullscreen") as boolean
+    },
     isFocused: () => {
         return ipcRenderer.sendSync("is-focused") as boolean
     },
@@ -99,7 +129,9 @@ const utilsBridge = {
     requestAttention: () => {
         ipcRenderer.invoke("request-attention")
     },
-    addWindowStateListener: (callback: (type: WindowStateListenerType, state: boolean) => any) => {
+    addWindowStateListener: (
+        callback: (type: WindowStateListenerType, state: boolean) => any
+    ) => {
         ipcRenderer.removeAllListeners("maximized")
         ipcRenderer.on("maximized", () => {
             callback(WindowStateListenerType.Maximized, true)
@@ -107,6 +139,14 @@ const utilsBridge = {
         ipcRenderer.removeAllListeners("unmaximized")
         ipcRenderer.on("unmaximized", () => {
             callback(WindowStateListenerType.Maximized, false)
+        })
+        ipcRenderer.removeAllListeners("enter-fullscreen")
+        ipcRenderer.on("enter-fullscreen", () => {
+            callback(WindowStateListenerType.Fullscreen, true)
+        })
+        ipcRenderer.removeAllListeners("leave-fullscreen")
+        ipcRenderer.on("leave-fullscreen", () => {
+            callback(WindowStateListenerType.Fullscreen, false)
         })
         ipcRenderer.removeAllListeners("window-focus")
         ipcRenderer.on("window-focus", () => {
@@ -121,7 +161,7 @@ const utilsBridge = {
     addTouchBarEventsListener: (callback: (IObjectWithKey) => any) => {
         ipcRenderer.removeAllListeners("touchbar-event")
         ipcRenderer.on("touchbar-event", (_, key: string) => {
-            callback({ key: key } )
+            callback({ key: key })
         })
     },
     initTouchBar: (texts: TouchBarTexts) => {
@@ -130,11 +170,16 @@ const utilsBridge = {
     destroyTouchBar: () => {
         ipcRenderer.invoke("touchbar-destroy")
     },
+
+    initFontList: (): Promise<Array<string>> => {
+        return ipcRenderer.invoke("init-font-list")
+    },
 }
 
-declare global { 
+declare global {
     interface Window {
         utils: typeof utilsBridge
+        fontList: Array<string>
     }
 }
 
